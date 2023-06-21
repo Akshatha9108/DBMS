@@ -54,19 +54,24 @@ union
 select name,'not exists'as same_city
 from salesman s where city not in (select city from customer where s.salesman_id=salesman_id)
 
--- 4.Create a veiw that finds the salesman who has the customer with the highest order of a day.
-create view highest_order as
-       select s.salesman_id,s.name,o.purchase_amt,o.ord_date from salesman s,orders o where s.salesman_id=o.salesman_id;
-	   select name,ord_date
-	   from highest_order h
-	   where purchase_amt=
-	         (select max(purchase_amt)
-			 from highest_order
-			 where h.ord_date=ord_date);
+-- 4.Create a veiw that finds the salesman who has the customer with the highest order of a day.//////Execute separately//////
+CREATE VIEW highest_order as 
+	select s.salesman_id,s.name,o.purchase_amt,o.ord_date
+	from salesman s,orders o
+	where s.salesman_id=o.salesman_id;
+	select *from highest_order;
+
+	select name,ord_date from highest_order h where purchase_amt=(select max(purchase_amt) from highest_order where h.ord_date=ord_date);
+
 -- 5.Demonstrate the delete operation bu removing salesman with id 1000. All his orders must also be deleted 
- 
+  delete from salesman where salesman_id=3;
+  select *from salesman;
+  select *from orders;
 
-
+  --6./Retrivr salesman details along with count of orders,total purchase amount of the orders assigned to him commisition earned by his*/
+ select s.salesman_id, s.name, s.city, count(*) as counts, sum(o.purchase_amt) as totalamt, sum((purchase_amt)*commision/100) as commision_earned
+from salesman s, orders o where s.salesman_id=o.salesman_id
+group by s.salesman_id, s.name, s.city, s.commision;
 
 
 
